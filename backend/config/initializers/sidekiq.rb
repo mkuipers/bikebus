@@ -7,6 +7,10 @@ Sidekiq.configure_server do |config|
     "materialize_rides" => {
       "cron"  => "0 0 * * *",   # nightly at midnight UTC
       "class" => "MaterializeRidesJob"
+    },
+    "stale_leader_check" => {
+      "cron"  => "* * * * *",   # every minute
+      "class" => "StaleLeaderCheckJob"
     }
   )
 end
