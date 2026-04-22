@@ -1,0 +1,40 @@
+source "https://rubygems.org"
+
+gem "rails", "~> 7.2.3", ">= 7.2.3.1"
+gem "pg", "~> 1.1"
+gem "puma", ">= 5.0"
+gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "bootsnap", require: false
+
+# Auth
+gem "devise"
+gem "devise-jwt"
+
+# PostGIS / spatial
+gem "activerecord-postgis-adapter"
+gem "rgeo-geojson"
+
+# Redis + background jobs
+gem "redis", ">= 4.0.1"
+gem "sidekiq"
+gem "sidekiq-cron"
+
+# Realtime
+gem "actioncable"
+
+# CORS
+gem "rack-cors"
+
+group :development, :test do
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "brakeman", require: false
+  gem "rubocop-rails-omakase", require: false
+end
+
+group :test do
+  gem "shoulda-matchers"
+  gem "database_cleaner-active_record"
+end

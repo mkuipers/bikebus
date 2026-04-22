@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgis
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: localhost
+  username: sprite
+  password: sprite
+
+development:
+  <<: *default
+  database: bikebus_development
+
+test:
+  <<: *default
+  database: bikebus_test
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
