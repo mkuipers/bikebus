@@ -16,11 +16,12 @@ class MaterializeRidesJob < ApplicationJob
                          schedule.start_time.hour, schedule.start_time.min, 0)
           .to_time.utc
 
-        Ride.find_or_create_by!(
-          route: schedule.route,
-          schedule: schedule,
-          scheduled_start_at: scheduled_start_at
-        )
+        attrs = { route: schedule.route, schedule: schedule, scheduled_start_at: scheduled_start_at }
+        next if Ride.exists?(attrs)
+
+        ride = Ride.create!(attrs)
+        reminder_at = scheduled_start_at - 30.minutes
+        ScheduledReminderJob.set(wait_until: reminder_at).perform_later(ride.id) if reminder_at > Time.current
       end
     end
   end
