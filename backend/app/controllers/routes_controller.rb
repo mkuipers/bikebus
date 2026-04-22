@@ -1,11 +1,27 @@
 class RoutesController < ApplicationController
   def index
-    routes = Route.active.publicly_visible
-    render json: routes
+    routes = Route.active.includes(:stops, :schedules)
+
+    if params[:school].present?
+      routes = routes.where("school_name ILIKE ?", "%#{params[:school]}%")
+    end
+
+    if params[:near].present?
+      lat, lng = params[:near].split(",").map(&:to_f)
+      radius = (params[:radius] || 10_000).to_i
+      routes = routes.joins(:stops).where(
+        "ST_DWithin(ST_MakePoint(stops.lng::float, stops.lat::float)::geography, ST_MakePoint(?, ?)::geography, ?)",
+        lng, lat, radius
+      ).distinct
+    else
+      routes = routes.publicly_visible
+    end
+
+    render json: routes.as_json(include: { stops: {}, schedules: {} })
   end
 
   def show
-    render json: find_route
+    render json: find_route.as_json(include: { stops: {}, schedules: {} })
   end
 
   def create
